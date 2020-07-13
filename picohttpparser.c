@@ -102,11 +102,12 @@ static const char *token_char_map = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
                                     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
                                     "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
+// what are u Doing??
 static const char *findchar_fast(const char *buf, const char *buf_end, const char *ranges, size_t ranges_size, int *found)
 {
     *found = 0;
 #if __SSE4_2__
-    if (likely(buf_end - buf >= 16)) {
+    if (likely(buf_end - buf >= 16)) { // more then 16 bytes == 128 bits
         __m128i ranges16 = _mm_loadu_si128((const __m128i *)ranges);
 
         size_t left = (buf_end - buf) & ~15;
@@ -263,8 +264,17 @@ static const char *parse_http_version(const char *buf, const char *buf_end, int 
 static const char *parse_headers(const char *buf, const char *buf_end, struct phr_header *headers, size_t *num_headers,
                                  size_t max_headers, int *ret)
 {
-    for (;; ++*num_headers) {
+
+    // this is focus on getting thest
+    //  ==================================== below is headers
+    //  Accept:image/gif.image/jpeg,*/*
+    //  Accept-Language:zh-cn
+    //
+
+    for (;; ++*num_headers) { // obviously num_headers mean how many lines does this head have
         CHECK_EOF();
+        
+        // if met with /r/n break -> header over
         if (*buf == '\015') {
             ++buf;
             EXPECT_CHAR('\012');
@@ -273,6 +283,8 @@ static const char *parse_headers(const char *buf, const char *buf_end, struct ph
             ++buf;
             break;
         }
+
+
         if (*num_headers == max_headers) {
             *ret = -1;
             return NULL;
@@ -342,11 +354,15 @@ static const char *parse_request(const char *buf, const char *buf_end, const cha
                                  size_t *path_len, int *minor_version, struct phr_header *headers, size_t *num_headers,
                                  size_t max_headers, int *ret)
 {
+    //
+    // following is focus on get this:  GET/sample.Jsp HTTP/1.1
+    //                                  method -- path -- pro-v /r/n
+
     /* skip first empty line (some clients add CRLF after POST content) */
     CHECK_EOF();
-    if (*buf == '\015') {
+    if (*buf == '\015') { // \015 == \r  
         ++buf;
-        EXPECT_CHAR('\012');
+        EXPECT_CHAR('\012'); // \012 == \n
     } else if (*buf == '\012') {
         ++buf;
     }
