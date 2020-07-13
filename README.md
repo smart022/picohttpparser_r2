@@ -1,4 +1,10 @@
-PicoHTTPParser
+A Fork from PicoHTTPParser
+=========
+Aim to understand how to write a http praser.
+Make some comment on .c file
+
+plant to rewrite a simpler version, just cut off those tricks.
+
 =============
 
 Copyright (c) 2009-2014 [Kazuho Oku](https://github.com/kazuho), [Tokuhiro Matsuno](https://github.com/tokuhirom), [Daisuke Murase](https://github.com/typester), [Shigeo Mitsunari](https://github.com/herumi)
