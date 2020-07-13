@@ -68,6 +68,7 @@
     CHECK_EOF();                                                                                                                   \
     EXPECT_CHAR_NO_CHECK(ch);
 
+// 
 #define ADVANCE_TOKEN(tok, toklen)                                                                                                 \
     do {                                                                                                                           \
         const char *tok_start = buf;                                                                                               \
@@ -204,7 +205,11 @@ static const char *is_complete(const char *buf, const char *buf_end, size_t last
         CHECK_EOF();
         if (*buf == '\015') {
             ++buf;
+
+            // sure is not end
             CHECK_EOF();
+
+            // sure next is ..
             EXPECT_CHAR('\012');
             ++ret_cnt;
         } else if (*buf == '\012') {
@@ -242,6 +247,11 @@ static const char *is_complete(const char *buf, const char *buf_end, size_t last
         *valp_ += res_;                                                                                                            \
     } while (0)
 
+
+
+// ez 2 understand , just assert the version of HTTP
+//
+
 /* returned pointer is always within [buf, buf_end), or null */
 static const char *parse_http_version(const char *buf, const char *buf_end, int *minor_version, int *ret)
 {
@@ -250,6 +260,7 @@ static const char *parse_http_version(const char *buf, const char *buf_end, int 
         *ret = -2;
         return NULL;
     }
+    // sure next char is the arg, else return -1
     EXPECT_CHAR_NO_CHECK('H');
     EXPECT_CHAR_NO_CHECK('T');
     EXPECT_CHAR_NO_CHECK('T');
@@ -261,11 +272,13 @@ static const char *parse_http_version(const char *buf, const char *buf_end, int 
     return buf;
 }
 
+
+//
 static const char *parse_headers(const char *buf, const char *buf_end, struct phr_header *headers, size_t *num_headers,
                                  size_t max_headers, int *ret)
 {
 
-    // this is focus on getting thest
+    // this is focus on getting these
     //  ==================================== below is headers
     //  Accept:image/gif.image/jpeg,*/*
     //  Accept-Language:zh-cn
